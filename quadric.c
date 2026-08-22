@@ -10,27 +10,29 @@
 
 #define MY_ASSERT(condition, message) my_assert((condition), (message), __FILE__, __LINE__)
 
+//
+void output(int, double*, double*);
 // prototypes
 void input(double *, char);
-void square_equation(double a, double b, double c, double*, double*);
+int square_equation(double a, double b, double c, double*, double*);
 bool is_equal(double num1, double num2);
 void my_assert(bool, const char*, const char*, int);
 
 // a == 0
-void linear_equation(double b, double c, double *);
-void infinite_solutions(void);
-void no_solutions(void);
+int linear_equation(double b, double c, double *);
+int infinite_solutions(void);
+int no_solutions(void);
 
 // b == 0 || c == 0
-void incomplete_c_zero(double a, double b, double *, double *);
-void incomplete_b_zero(double a, double c, double *, double *);
-void zero_equation_ax2(double *);
-void negative_sqrt_error(void);
+int incomplete_c_zero(double a, double b, double *, double *);
+int incomplete_b_zero(double a, double c, double *, double *);
+int zero_equation_ax2(double *);
+int negative_sqrt_error(void);
 
 // a != 0, b != 0, c != 0
-void plus_discr(double a, double b, double discr, double *, double *);
-void null_discr(double a, double b, double *);
-void minus_discr(double discr);
+int plus_discr(double a, double b, double discr, double *, double *);
+int null_discr(double a, double b, double *);
+int minus_discr(double discr);
 
 // input
 void input (double *x, char litera)
@@ -74,28 +76,30 @@ void input (double *x, char litera)
 
 
 // главная функция 
-void square_equation(double a, double b, double c, double* x1, double* x2)
+int square_equation(double a, double b, double c, double* x1, double* x2)
 {
     // a == 0
     if (is_equal(a, EPSILON_ZERO))
     {
         if (is_equal(b, EPSILON_ZERO))
         {
-            if (is_equal(c, EPSILON_ZERO))  infinite_solutions();
-            else    no_solutions();
+            if (is_equal(c, EPSILON_ZERO)) 
+            {    
+                return infinite_solutions(); // бесконечность решений (case 1)
+            }
+
+            else    return no_solutions(); // нет решений (case 2)
         }
         else
         {
-            linear_equation(b, c, x1);
+            return linear_equation(b, c, x1); // 1 решение (case 3)
         }
-        return; // Выход из функции
     }
 
     // Случай 1: ax^2 = 0 
     if (is_equal(b, EPSILON_ZERO) && is_equal(c, EPSILON_ZERO))
     {
-        zero_equation_ax2(x1);
-        return;
+        return (zero_equation_ax2(x1)); // 1 решение (case 3)
     }
 
     // Случай 2: ax^2 + c = 0 
@@ -103,20 +107,18 @@ void square_equation(double a, double b, double c, double* x1, double* x2)
     {
         if ((a > 0 && c < 0) || (a < 0 && c > 0))
         {
-            incomplete_b_zero(a, c, x1, x2);
+            return incomplete_b_zero(a, c, x1, x2); // 2 решения (case 4)
         }
         else
         {
-            negative_sqrt_error();
+            return negative_sqrt_error(); // нет решений (case 2)
         }
-        return;
     }
 
     // Случай 3: ax^2 + bx = 0 
     if (is_equal(c, EPSILON_ZERO))
     {
-        incomplete_c_zero(a, b, x1, x2);
-        return;
+        return incomplete_c_zero(a, b, x1, x2); // 2 решения (case 4)
     }
 
     // Случай 4: ax^2 + bx + c = 0
@@ -124,15 +126,43 @@ void square_equation(double a, double b, double c, double* x1, double* x2)
 
     if (discr > EPSILON_SR)
     {
-        plus_discr(a, b, discr, x1, x2);
+        return plus_discr(a, b, discr, x1, x2); // 2 решения (case 4)
     }
-    else if (is_equal(discr, EPSILON_ZERO))
+    else if (is_equal(discr, EPSILON_ZERO))                                                         
     {
-        null_discr(a, b, x1);
+        return null_discr(a, b, x1); // 1 решение (case 3)
     }
     else
     {
-        minus_discr(discr);
+        return minus_discr(discr); // нет решений (case 2)
+    }
+}
+
+void output(int results, double* x1, double* x2)
+{
+    switch (results)
+    {
+    case 1:
+        printf("Уравнение решено...\n");
+        printf("Решений БЕСКОНЕЧНОЕ количество (0 = 0)\n\n");
+        break;
+    case 2:
+        printf("Уравнение решено...\n");
+        printf("Неполное квадратное уравнение:\n");
+        printf("Нет решений");
+        break;
+    case 3:
+        printf("Уравнение решено...\n");
+        printf("1 Решение: %.2lg\n", *x1);
+        break;
+    case 4:
+        printf("Уравнение решено...\n");
+        printf("У уравнения 2 корня:\n");
+        printf("1й корень: %.2lg\n2й корень: %.2lg\n\n", *x1, *x2);
+        break;
+        
+    default:
+        break;
     }
 }
 
@@ -158,94 +188,85 @@ void my_assert(bool condition, const char* message, const char* file, int line)
     }
 }
 
+
+
 //------------functions----------------
 
 // bx + c = 0
-void linear_equation(double b, double c, double *x1)
+int linear_equation(double b, double c, double *x1)
 {
     *x1 = -c / b;
-    printf("Ур-е вида bx + c = 0\nЕдинственный корень: %.2lg\n\n", *x1);
+    return 3;
 }
 
 // 0 == 0
-void infinite_solutions(void)
+int infinite_solutions(void) // б р
 {
-    printf("Решений БЕСКОНЕЧНОЕ количество (0 = 0)\n\n");
+    return 1;
 }
 
 // c == 0, a == 0, b == 0
-void no_solutions(void)
+int no_solutions(void) // 0 р
 {
-    printf("Решений нет\n\n");
+    return 2;
 }
 
 // c == 0
-void incomplete_c_zero(double a, double b, double *x1, double *x2)
+int incomplete_c_zero(double a, double b, double *x1, double *x2)
 {
     double discr = b * b;
-    printf("Дискриминант = %.2lg\n\n", discr);
 
     *x1 = 0.0;
     *x2 = -b / a;
 
-    printf("Неполное квадратное уравнение (c = 0):\n");
-    printf("1й корень: %.2lg\n2й корень: %.2lg\n\n", *x1, *x2);
+    return 4;
 }
 
 // b == 0
-void incomplete_b_zero(double a, double c, double *x1, double *x2)
+int incomplete_b_zero(double a, double c, double *x1, double *x2)
 {
     *x1 = sqrt(-c / a);
     *x2 = -sqrt(-c / a);
-
-    printf("Неполное квадратное уравнение (b = 0):\n");
-    printf("1й корень: %.2lg\n2й корень: %.2lg\n\n", *x1, *x2);
+    return 4;
 }
 
 // ax^2 = 0 
-void zero_equation_ax2(double *x1)
+int zero_equation_ax2(double *x1) // 1 р
 {
     *x1 = 0.0;
-    printf("Ур-е вида ax^2 = 0\n Единственный корень: %lg\n\n", *x1);
+    return 3;
 }
 
 // берет корень из отрицательного числа
-void negative_sqrt_error(void)
+int negative_sqrt_error(void)
 {
-    printf("Неполное квадратное уравнение (b = 0):\n");
-    printf("Решений нет)\n\n");
+    return 2;
 }
 
 //--------------------------
 
 // x1 && x2
-void plus_discr(double a, double b, double discr, double *x1, double *x2)
+int plus_discr(double a, double b, double discr, double *x1, double *x2)
 {
 
     MY_ASSERT(!is_equal(a, EPSILON_ZERO), "Bug: a is zero in plus_discr!");
     MY_ASSERT(discr > EPSILON_SR, "Bug: discr must be positive in plus_discr!");
 
-    printf("Дискриминант = %.2lg\n\n", discr);
-
     *x1 = (-b + sqrt(discr)) / (2.0 * a);
     *x2 = (-b - sqrt(discr)) / (2.0 * a);
 
-    printf("1й корень: %.2lg\n2й корень: %.2lg\n\n", *x1, *x2);
+    return 4;
 }
 
 // x1 == x2
-void null_discr(double a, double b, double *x1)
+int null_discr(double a, double b, double *x1)
 {
-    printf("Дискриминант = %.2lg\n\n", 0.0);
-
     *x1 = -b / (2.0 * a);
-
-    printf("Всего у ур-я существует 1 корень: %.2lg\n\n", *x1);
+    return 3;
 }
 
 // D < 0
-void minus_discr(double discr)
+int minus_discr(double discr)
 {
-    printf("Дискриминант = %.2lg < 0\n\n", discr);
-    printf("Решений нет\n\n");
+    return 2;
 }
