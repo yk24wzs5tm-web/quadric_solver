@@ -5,7 +5,7 @@
 #include <assert.h>
 
 #define EPSILON_ZERO 0.0      // Значение нуля для сравнения double
-#define EPSILON_SR   0.000001 // Точность вычислений 
+#define EPSILON_SR 0.000001 // Точность вычислений 
 
 #define INFINITYROOTS -1
 #define ZEROROOTS 0
@@ -14,10 +14,13 @@
 
 #define MY_ASSERT(condition, message) my_assert((condition), (message), __FILE__, __LINE__)
 
-//
+// output
 void output(int, double*, double*);
 // prototypes
 void input(double *, char);
+
+void new_line_buffer(void);
+
 int square_equation(double a, double b, double c, double*, double*);
 bool is_equal(double num1, double num2);
 void my_assert(bool, const char*, const char*, int);
@@ -55,12 +58,11 @@ void input (double *x, char litera) //TODO: the word 'literal' is written with '
             {
                 printf("Повтори ввод: ");
 
-                int num_next = 0;
-                while ((num_next = getchar()) != '\n'); // make function
+                new_line_buffer();
             }
-            else {
+
+            else 
                 break;
-            }
 
         }
         else if (flag == EOF)
@@ -72,8 +74,7 @@ void input (double *x, char litera) //TODO: the word 'literal' is written with '
         {
             printf("Повтори ввод: \n");
 
-            int ch = 0;
-            while ((ch = getchar()) != '\n' && ch != EOF);
+            new_line_buffer();
         }
     }
 }
@@ -175,6 +176,12 @@ bool is_equal(double num1, double num2)
     return (fabs(num1 - num2) < EPSILON_SR);
 }
 
+// buffer clear for \n
+void new_line_buffer(void)
+{
+    int num_next = 0;
+    while ((num_next = getchar()) != '\n');
+}
 
 // my_assert
 void my_assert(bool condition, const char* message, const char* file, int line)

@@ -94,3 +94,20 @@ int RunOneTest(double a, double b, double c,
         return GOOD_ITER;
     }
 }
+
+
+
+/*
+
+
+struct type1
+{
+int b
+}
+
+a()
+{
+struct type1 t1 = {x}
+}
+
+*/
