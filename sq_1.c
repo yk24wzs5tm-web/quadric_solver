@@ -1,7 +1,9 @@
-#include "quadric.c"
+#include "testing.c"
 
 int main(void)
 {
+    RunTest();
+
     while (true)
     {        
         double a = 0.0, b = 0.0, c = 0.0;
@@ -12,10 +14,13 @@ int main(void)
         input(&b, 'b');
         input(&c, 'c');
         
+        square_equation(a, b, c, &x1, &x2);
         results = square_equation(a, b, c, &x1, &x2);
+
+        RunTest();
+
         output(results, &x1, &x2);
 
         printf("==================================================\n\n");
     }
-    return 0;
 }

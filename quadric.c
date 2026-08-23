@@ -6,7 +6,11 @@
 
 #define EPSILON_ZERO 0.0      // Значение нуля для сравнения double
 #define EPSILON_SR   0.000001 // Точность вычислений 
-#define SIZE 10
+
+#define INFINITYROOTS -1
+#define ZEROROOTS 0
+#define ONEROOT 1
+#define TWOROOTS 2
 
 #define MY_ASSERT(condition, message) my_assert((condition), (message), __FILE__, __LINE__)
 
@@ -35,14 +39,14 @@ int null_discr(double a, double b, double *);
 int minus_discr(double discr);
 
 // input
-void input (double *x, char litera)
+void input (double *x, char litera) //TODO: the word 'literal' is written with 'l' on the end
 {
     while (true)
     {
         printf("Введите значение переменной для '%c': ", litera);
         
         int flag = 0;
-        flag = scanf("%lg", x); 
+        flag = scanf("%lg", x);  // надо проверить на NaN
 
         if (flag == 1)
         {
@@ -52,7 +56,7 @@ void input (double *x, char litera)
                 printf("Повтори ввод: ");
 
                 int num_next = 0;
-                while ((num_next = getchar()) != '\n');
+                while ((num_next = getchar()) != '\n'); // make function
             }
             else {
                 break;
@@ -88,7 +92,7 @@ int square_equation(double a, double b, double c, double* x1, double* x2)
                 return infinite_solutions(); // бесконечность решений (case 1)
             }
 
-            else    return no_solutions(); // нет решений (case 2)
+            else return no_solutions(); // нет решений (case 2)
         }
         else
         {
@@ -142,20 +146,19 @@ void output(int results, double* x1, double* x2)
 {
     switch (results)
     {
-    case 1:
+    case INFINITYROOTS:
         printf("Уравнение решено...\n");
         printf("Решений БЕСКОНЕЧНОЕ количество (0 = 0)\n\n");
         break;
-    case 2:
+    case ZEROROOTS:
         printf("Уравнение решено...\n");
-        printf("Неполное квадратное уравнение:\n");
-        printf("Нет решений");
+        printf("Нет решений\n");
         break;
-    case 3:
+    case ONEROOT:
         printf("Уравнение решено...\n");
         printf("1 Решение: %.2lg\n", *x1);
         break;
-    case 4:
+    case TWOROOTS:
         printf("Уравнение решено...\n");
         printf("У уравнения 2 корня:\n");
         printf("1й корень: %.2lg\n2й корень: %.2lg\n\n", *x1, *x2);
@@ -196,19 +199,19 @@ void my_assert(bool condition, const char* message, const char* file, int line)
 int linear_equation(double b, double c, double *x1)
 {
     *x1 = -c / b;
-    return 3;
+    return ONEROOT;
 }
 
 // 0 == 0
 int infinite_solutions(void) // б р
 {
-    return 1;
+    return INFINITYROOTS;
 }
 
 // c == 0, a == 0, b == 0
 int no_solutions(void) // 0 р
 {
-    return 2;
+    return ZEROROOTS;
 }
 
 // c == 0
@@ -219,7 +222,7 @@ int incomplete_c_zero(double a, double b, double *x1, double *x2)
     *x1 = 0.0;
     *x2 = -b / a;
 
-    return 4;
+    return TWOROOTS;
 }
 
 // b == 0
@@ -227,20 +230,20 @@ int incomplete_b_zero(double a, double c, double *x1, double *x2)
 {
     *x1 = sqrt(-c / a);
     *x2 = -sqrt(-c / a);
-    return 4;
+    return TWOROOTS;
 }
 
 // ax^2 = 0 
 int zero_equation_ax2(double *x1) // 1 р
 {
     *x1 = 0.0;
-    return 3;
+    return ONEROOT;
 }
 
 // берет корень из отрицательного числа
 int negative_sqrt_error(void)
 {
-    return 2;
+    return ZEROROOTS;
 }
 
 //--------------------------
@@ -255,18 +258,18 @@ int plus_discr(double a, double b, double discr, double *x1, double *x2)
     *x1 = (-b + sqrt(discr)) / (2.0 * a);
     *x2 = (-b - sqrt(discr)) / (2.0 * a);
 
-    return 4;
+    return TWOROOTS;
 }
 
 // x1 == x2
 int null_discr(double a, double b, double *x1)
 {
     *x1 = -b / (2.0 * a);
-    return 3;
+    return ONEROOT;
 }
 
 // D < 0
 int minus_discr(double discr)
 {
-    return 2;
+    return ZEROROOTS;
 }
