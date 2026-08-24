@@ -8,6 +8,7 @@ struct Answers
 {
     double x1;
     double x2;
+    int results;
 };
 
 struct QuadricIn
@@ -34,26 +35,26 @@ void input(QuadricIn*, char);
 
 void new_line_buffer(void);
 
-int square_equation(QuadricIn, Answers*);
+void square_equation(QuadricIn, Answers*);
 bool is_equal(double num1, double num2);
 void my_assert(bool, const char*, const char*, int);
 
 // a == 0
-int linear_equation(QuadricIn, Answers*);
+void linear_equation(QuadricIn, Answers*);
 //int linear_equation(double b, double c, Answers*);
-int infinite_solutions(void);
-int no_solutions(void);
+void infinite_solutions(Answers*);
+void no_solutions(Answers*);
 
 // b == 0 || c == 0
-int incomplete_c_zero(QuadricIn, Answers*);
-int incomplete_b_zero(QuadricIn, Answers*);
-int zero_equation_ax2(Answers*);
-int negative_sqrt_error(void);
+void incomplete_c_zero(QuadricIn, Answers*);
+void incomplete_b_zero(QuadricIn, Answers*);
+void zero_equation_ax2(Answers*);
+void negative_sqrt_error(Answers*);
 
 // a != 0, b != 0, c != 0
-int plus_discr(QuadricIn, double discr, Answers*);
-int null_discr(QuadricIn, Answers*);
-int minus_discr(double discr);
+void plus_discr(QuadricIn, double discr, Answers*);
+void null_discr(QuadricIn, Answers*);
+void minus_discr(Answers*, double discr);
 
 // input 
 void input (double* koef, char literal) 
@@ -94,7 +95,7 @@ void input (double* koef, char literal)
 }
 
 // главная функция 
-int square_equation(QuadricIn koef, Answers* ans)
+void square_equation(QuadricIn koef, Answers* ans)
 {
     // double* x1 = &((*ans).x1);
     // double* x2 = &((*ans).x2);
@@ -105,21 +106,24 @@ int square_equation(QuadricIn koef, Answers* ans)
         {
             if (is_equal(koef.c, EPSILON_ZERO)) 
             {    
-                return infinite_solutions(); // бесконечность решений (case 1)
+                infinite_solutions(ans); // бесконечность решений (case 1)
+                return;
             }
 
-            else return no_solutions(); // нет решений (case 2)
+            else no_solutions(ans); return; // нет решений (case 2)
         }
         else
         {
-            return linear_equation(koef, ans); // 1 решение (case 3)
+            linear_equation(koef, ans); // 1 решение (case 3)
+            return;
         }
     }
 
     // Случай 1: ax^2 = 0 
     if (is_equal(koef.b, EPSILON_ZERO) && is_equal(koef.c, EPSILON_ZERO))
     {
-        return (zero_equation_ax2(ans)); // 1 решение (case 3)
+        (zero_equation_ax2(ans)); // 1 решение (case 3)
+        return;
     }
 
     // Случай 2: ax^2 + c = 0 
@@ -127,11 +131,13 @@ int square_equation(QuadricIn koef, Answers* ans)
     {
         if ((koef.a > 0 && koef.c < 0) || (koef.a < 0 && koef.c > 0))
         {
-            return incomplete_b_zero(koef, ans); // 2 решения (case 4)
+            incomplete_b_zero(koef, ans); // 2 решения (case 4)
+            return;
         }
         else
         {
-            return negative_sqrt_error(); // нет решений (case 2)
+            negative_sqrt_error(ans); // нет решений (case 2)
+            return;
         }
     }
 
@@ -142,7 +148,8 @@ int square_equation(QuadricIn koef, Answers* ans)
     // Случай 3: ax^2 + bx = 0 
     if (is_equal(koef.c, EPSILON_ZERO))
     {
-        return incomplete_c_zero(koef, ans); // 2 решения (case 4)
+        incomplete_c_zero(koef, ans); // 2 решения (case 4)
+        return;
     }
 
     // Случай 4: ax^2 + bx + c = 0
@@ -150,21 +157,24 @@ int square_equation(QuadricIn koef, Answers* ans)
 
     if (discr > EPSILON_SR)
     {
-        return plus_discr(koef, discr, ans); // 2 решения (case 4)
+        plus_discr(koef, discr, ans); // 2 решения (case 4)
+        return;
     }
     else if (is_equal(discr, EPSILON_ZERO))                                                         
     {
-        return null_discr(koef, ans); // 1 решение (case 3)
+        null_discr(koef, ans); // 1 решение (case 3)
+        return;
     }
     else
     {
-        return minus_discr(discr); // нет решений (case 2)
+        minus_discr(ans, discr); // нет решений (case 2)
+        return;
     }
 }
 
-void output(int results, Answers *ans)
+void output(int, Answers *ans)
 {
-    switch (results)
+    switch ((*ans).results)
     {
     case INFINITYROOTS:
         printf("Уравнение решено...\n");
@@ -220,60 +230,62 @@ void my_assert(bool condition, const char* message, const char* file, int line)
 //------------functions----------------
 
 // bx + c = 0
-int linear_equation(QuadricIn koef, Answers* ans)
+void linear_equation(QuadricIn koef, Answers* ans)
 {
     (*ans).x1 = -koef.c / koef.b;
-    return ONEROOT;
+    (*ans).results = ONEROOT;
 }
 
 // 0 == 0
-int infinite_solutions(void) // б р
+void infinite_solutions(Answers* ans) // б р
 {
-    return INFINITYROOTS;
+    (*ans).results = INFINITYROOTS;
 }
 
 // c == 0, a == 0, b == 0
-int no_solutions(void) // 0 р
+void no_solutions(Answers* ans) // 0 р
 {
-    return ZEROROOTS;
+    (*ans).results = ZEROROOTS;
 }
 
 // c == 0
-int incomplete_c_zero(QuadricIn koef, Answers* ans)
+void incomplete_c_zero(QuadricIn koef, Answers* ans)
 {
     double discr = koef.b * koef.b;
 
     (*ans).x1 = 0.0;
     (*ans).x2 = -koef.b / koef.a;
 
-    return TWOROOTS;
+    (*ans).results = TWOROOTS;
 }
 
 // b == 0
-int incomplete_b_zero(QuadricIn koef, Answers* ans)
+void incomplete_b_zero(QuadricIn koef, Answers* ans)
 {
     (*ans).x1 = sqrt(-koef.c / koef.a);
     (*ans).x2 = -sqrt(-koef.c / koef.a);
-    return TWOROOTS;
+
+    (*ans).results = TWOROOTS;
 }
 
 // ax^2 = 0 
-int zero_equation_ax2(Answers* ans) // 1 р
+void zero_equation_ax2(Answers* ans) // 1 р
 {
     (*ans).x1 = 0.0;
-    return ONEROOT;
+
+    (*ans).results = ONEROOT;
 }
 
 // берет корень из отрицательного числа
-int negative_sqrt_error(void)
+void negative_sqrt_error(Answers* ans)
 {
-    return ZEROROOTS;
+    (*ans).results = ZEROROOTS;
 }
 
 //--------------------------
 
 // x1 && x2
-int plus_discr(QuadricIn koef, double discr, Answers* ans)
+void plus_discr(QuadricIn koef, double discr, Answers* ans)
 {
 
     MY_ASSERT(!is_equal(koef.a, EPSILON_ZERO), "Bug: a is zero in plus_discr!");
@@ -281,18 +293,19 @@ int plus_discr(QuadricIn koef, double discr, Answers* ans)
     (*ans).x1 = (-koef.b + sqrt(discr)) / (2.0 * koef.a);
     (*ans).x2 = (-koef.b - sqrt(discr)) / (2.0 * koef.a);
 
-    return TWOROOTS;
+    (*ans).results = TWOROOTS;
 }
 
 // x1 == x2
-int null_discr(QuadricIn koef, Answers* ans)
+void null_discr(QuadricIn koef, Answers* ans)
 {
     (*ans).x1 = -koef.b / (2.0 * koef.a);
-    return ONEROOT;
+
+    (*ans).results = ONEROOT; 
 }
 
 // D < 0
-int minus_discr(double discr)
+void minus_discr(Answers* ans, double discr)
 {
-    return ZEROROOTS;
+    (*ans).results = ZEROROOTS;    
 }

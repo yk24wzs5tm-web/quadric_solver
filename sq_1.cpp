@@ -5,7 +5,6 @@ int main(void)
     Answers ans = {.x1 = NAN, .x2 = NAN};
     QuadricIn koef = {.a = 0.0, .b = 0.0, .c = 0.0};
 
-    int results = 0;
     char word = ' ';
 
     while(true)
@@ -15,7 +14,7 @@ int main(void)
 
         while((word = getchar()) != EOF)
             {
-                if (word == 'Y')
+                if (word == 'Y' || word == 'y')
                 {
                     printf("____ТЕСТИРОВКА____\n");
                     RunAllTests();
@@ -24,27 +23,27 @@ int main(void)
                     input(&(koef.b), 'b');
                     input(&(koef.c), 'c');
                     
-                    results = square_equation(koef, &ans);
-                    output(results, &ans);
+                    square_equation(koef, &ans);
+                    output(ans.results, &ans);
 
                     break;
                 }
 
-                else if (word == 'N')
+                else if (word == 'N' || word == 'n')
                 {
                     input(&(koef.a), 'a');
                     input(&(koef.b), 'b');
                     input(&(koef.c), 'c');
                     
-                    results = square_equation(koef, &ans);
-                    output(results, &ans);
+                    square_equation(koef, &ans);
+                    output(ans.results, &ans);
 
                     printf("==================================================\n\n");
 
                     break;
                 }
 
-                else if (word == 'q')
+                else if (word == 'Q' || word == 'q')
                 {
                     new_line_buffer();
                     printf("\nВы вышли из программы\n");
