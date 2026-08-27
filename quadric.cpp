@@ -9,7 +9,7 @@ struct Answers
     int var_of_roots;
     double x1;
     double x2;
-}; // TODO doxygen
+};
 
 struct QuadraticIn 
 {
@@ -41,7 +41,11 @@ bool is_zero(double);
 void clean_buffer(void);
 
 void solve_square_equation(QuadraticIn, Answers*);
-bool lin_equation(QuadraticIn koef, Answers* ans);
+bool lin_equation(QuadraticIn, Answers*);
+bool only_a_case(QuadraticIn, double, Answers*);
+bool b_is_zero_case(QuadraticIn, double, Answers*);
+bool c_is_zero_case(QuadraticIn, double, Answers*);
+bool squear_type_eq(QuadraticIn, double, double, Answers*);
 
 
 int is_equal(double num1, double num2);
@@ -83,7 +87,6 @@ void input_coef (double* koef, char literal)
 
                 clean_buffer();
             }
-
             else 
                 break;
 
@@ -96,7 +99,6 @@ void input_coef (double* koef, char literal)
         else
         {
             printf("Повтори ввод: \n");
-
             clean_buffer();
         }
     }
@@ -110,76 +112,33 @@ void solve_square_equation(QuadraticIn koef, Answers* ans)
         return;
     }
         
-    // if (is_zero(koef.a))
-    // {
-    //     if (is_zero(koef.b))
-    //     {
-    //         if (is_zero(koef.c)) 
-    //         {    
-    //             infinite_solutions(ans); // бесконечность решений (case 1)
-    //             return;
-    //         }
-
-    //         else no_solutions(ans); return; // нет решений (case 2)
-    //     }
-    //     else
-    //     {
-    //         linear_equation(koef, ans); // 1 решение (case 3)
-    //         return;
-    //     }
-    // }
-
     double discr = (koef.b * koef.b) - (4.0 * koef.a * koef.c);
     double sqrt_discr = sqrt(discr);
 
     // Случай 1: ax^2 = 0 
-    if (is_zero(koef.b) && is_zero(koef.c))
+    if (only_a_case(koef, sqrt_discr, ans))
     {
-        (is_zero_root(ans)); // 1 решение (case 3)
         return;
-    }
+    }    
 
     // Случай 2: ax^2 + c = 0 
-    if (is_zero(koef.b))
+    if (b_is_zero_case(koef, sqrt_discr, ans))
     {
-        if ((koef.a > 0 && koef.c < 0) || (koef.a < 0 && koef.c > 0))
-        {
-//            incomplete_b_zero(koef, ans); // 2 решения (case 4)
-            is_pos_discr(koef, sqrt_discr, ans);
-            return;
-        }
-        else
-        {
-            negative_sqrt_error(ans); // нет решений (case 2)
-            return;
-        }
-    }
+        return;
+    }    
 
-    // Случай 3: ax^2 + bx = 0 
-    if (is_zero(koef.c))
+    if (c_is_zero_case(koef, sqrt_discr, ans))
     {
-//        incomplete_c_zero(koef, ans); // 2 решения (case 4)
-        is_pos_discr(koef, sqrt_discr, ans);
+        return;
+    }    
+
+    if (squear_type_eq(koef, discr, sqrt_discr, ans))
+    {
         return;
     }
-
-    // Случай 4: ax^2 + bx + c = 0
     
-    if (discr > DOUBLE_ZERO)
-    {
-        is_pos_discr(koef, sqrt_discr, ans); // 2 решения (case 4)
-        return;
-    }
-    else if (is_zero(discr))                                                         
-    {
-        is_null_discr(koef, ans); // 1 решение (case 3)
-        return;
-    }
-    else
-    {
-        is_neg_discr(ans); // нет решений (case 2)
-        return;
-    }
+    if (x1>x2) ....
+
 }
 
 void output_coef(int, Answers *ans)  // dell int
@@ -303,7 +262,10 @@ void is_pos_discr(QuadraticIn koef, double sqrt_discr, Answers* ans)
     (*ans).x1 = (-koef.b + sqrt_discr) / (2.0 * koef.a);
     (*ans).x2 = (-koef.b - sqrt_discr) / (2.0 * koef.a);
 
-    (*ans).var_of_roots = TWOROOTS;
+    if (((*ans).x1 == (*ans).x1 - 0) && ((*ans).x2 == (*ans).x2 - 0) && (*ans).x1 == (*ans).x2)
+        (*ans).var_of_roots = ONEROOT;
+    else
+        (*ans).var_of_roots = TWOROOTS;
 }
 
 // x1 == x2
@@ -324,6 +286,8 @@ bool is_zero(double num)
 {
     return (is_equal(num, DOUBLE_ZERO));
 }
+
+//--------------------------
 
 // инициализция + реализация программы для ввода, счета и вывода проги
 void solve_std_eq(void);
@@ -374,31 +338,61 @@ bool lin_equation(QuadraticIn koef, Answers* ans)
     return false;
 }
 
+bool only_a_case(QuadraticIn koef, double sqrt_discr, Answers* ans)
+{
+    if (is_zero(koef.b) && is_zero(koef.c))
+    {
+        is_pos_discr(koef, sqrt_discr, ans); // 1 решение (case 3)
+        return true;
+    }
+    return false;
+}
 
+bool b_is_zero_case(QuadraticIn koef, double sqrt_discr, Answers* ans)
+{
+    if (is_zero(koef.b))
+    {
+        if ((koef.a > 0 && koef.c < 0) || (koef.a < 0 && koef.c > 0))
+        {
+            is_pos_discr(koef, sqrt_discr, ans);
+            return true;
+        }
+        else
+        {
+            negative_sqrt_error(ans); // нет решений (case 2)
+            return true;
+        }
+    }
+    return false;
+}
 
-// void lin_equation(void);
+bool c_is_zero_case(QuadraticIn koef, double sqrt_discr, Answers* ans)
+{
+    if (is_zero(koef.c))
+    {
+//        incomplete_c_zero(koef, ans); // 2 решения (case 4)
+        is_pos_discr(koef, sqrt_discr, ans);
+        return true;
+    }
 
-// void lin_equation(void)
-// {   
-//         Answers ans = {.var_of_roots = 0, .x1 = NAN, .x2 = NAN};
-//     QuadraticIn koef = {.a = 0.0, .b = 0.0, .c = 0.0};
+    return false;
+}
 
-//     if (is_zero(koef.a))
-//     {
-//         if (is_zero(koef.b))
-//         {
-//             if (is_zero(koef.c)) 
-//             {    
-//                 infinite_solutions(ans); // бесконечность решений (case 1)
-//                 return;
-//             }
+bool squear_type_eq(QuadraticIn koef, double discr, double sqrt_discr, Answers* ans)
+{
+    if (discr > DOUBLE_ZERO)
+    {
+        is_pos_discr(koef, sqrt_discr, ans); // 2 решения (case 4)
+        return true;
 
-//             else no_solutions(ans); return; // нет решений (case 2)
-//         }
-//         else
-//         {
-//             linear_equation(koef, ans); // 1 решение (case 3)
-//             return;
-//         }
-//     }
-// }
+    } else if (is_zero(discr)) {
+        is_null_discr(koef, ans); // 1 решение (case 3)
+        return true;
+
+    } else {
+        is_neg_discr(ans); // нет решений (case 2)
+        return true;
+    }
+
+    return false;
+}
