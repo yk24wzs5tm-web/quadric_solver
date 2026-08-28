@@ -1,0 +1,11 @@
+
+/** \mainpage My docs
+
+    \brief Library
+    \author ROA
+    \version 1.1
+    \date August 2026 (Summer School)
+    \warning This library was created for educational purposes only
+
+    An ordinary Library
+*/
