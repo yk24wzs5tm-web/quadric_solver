@@ -4,17 +4,17 @@
 // input 
 
 /// @brief 
-/// @param koef structure storing the coefficients of the equation
+/// @param coef structure storing the coefficients of the equation
 /// @param literal character input to be transferred to printf
 
-void input_coef (double* koef, char literal) 
+void input_coef (double* coef, char literal) 
 {
     while (true)
     {
         printf("Введите значение переменной для '%c': ", literal);
         
         int flag = 0;
-        flag = scanf("%lg", koef); 
+        flag = scanf("%lg", coef); 
 
         if (flag == 1)
         {
@@ -41,7 +41,6 @@ void input_coef (double* koef, char literal)
         }
     }
 }
-
 //--------------------------
 
 /// @brief cases of printf based on the number of roots

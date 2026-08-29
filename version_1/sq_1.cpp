@@ -5,7 +5,7 @@
 int main(void)
 {
     Answers ans = {.var_of_roots = 0, .x1 = NAN, .x2 = NAN};
-    QuadraticIn koef = {.a = 0.0, .b = 0.0, .c = 0.0};
+    Coefficients coef = {.a = 0.0, .b = 0.0, .c = 0.0};
 
     char entered_char = '\0';
     while (true)
@@ -17,8 +17,8 @@ int main(void)
         clean_buffer();
 
         if (entered_char == 'Y' || entered_char == 'y') {
-            printf("____ТЕСТИРОВКА____\n");
-            RunAllTests();
+            int x = RunAllTests();
+            if (x == ERROR_IN_TEST) return ERROR_IN_TEST;
             continue;
         
         } else if (entered_char == 'Q' || entered_char == 'q') {

@@ -3,24 +3,24 @@
 //--------------------------
 
 /// @brief function for calculating the roots of an equation; sorts the roots in ascending order
-/// @param koef structure storing the coefficients of the equation
+/// @param coef structure storing the coefficients of the equation
 /// @param ans structure storing the roots of the equation and their count
 
-void solve_square_equation(QuadraticIn koef, Answers* ans)
+void solve_square_equation(Coefficients coef, Answers* ans)
 {        
-    double discr = (koef.b * koef.b) - (4.0 * koef.a * koef.c);
+    double discr = (coef.b * coef.b) - (4.0 * coef.a * coef.c);
     double sqrt_discr = sqrt(discr);
 
-    if (lin_equation(koef, ans));
+    if (lin_equation(coef, ans));
     // Случай 1: ax^2 = 0 
-    else if (only_a_case(koef, sqrt_discr, ans));
+    else if (only_a_case(coef, sqrt_discr, ans));
 
     // Случай 2: ax^2 + c = 0 
-    else if (b_is_zero_case(koef, sqrt_discr, ans)); 
+    else if (b_is_zero_case(coef, sqrt_discr, ans)); 
 
-    else if (c_is_zero_case(koef, sqrt_discr, ans));
+    else if (c_is_zero_case(coef, sqrt_discr, ans));
 
-    else if (squear_type_eq(koef, discr, sqrt_discr, ans))
+    else if (squear_type_eq(coef, discr, sqrt_discr, ans))
         ;
 
     if (ans->x1 > ans->x2)
@@ -84,13 +84,13 @@ void my_assert(bool condition, const char* message, const char* file, int line)
 // bx + c = 0
 
 /// @brief linear equation with a = 0 in squear equation
-/// @param koef structure storing the coefficients of the equation
+/// @param coef structure storing the coefficients of the equation
 /// @param ans structure storing the roots of the equation and their count
-void linear_equation(QuadraticIn koef, Answers* ans)
+void linear_equation(Coefficients coef, Answers* ans)
 {
-    MY_ASSERT(!is_zero(koef.b), "Bug: b is zero in division!");
+    MY_ASSERT(!is_zero(coef.b), "Bug: b is zero in division!");
 
-    ans->x1 = -koef.c / koef.b;
+    ans->x1 = -coef.c / coef.b;
     ans->var_of_roots = ONEROOT;
 }
 
@@ -128,17 +128,17 @@ void negative_sqrt(Answers* ans)
 // x1 && x2
 
 /// @brief variant with two roots of the equation
-/// @param koef structure storing the coefficients of the equation
+/// @param coef structure storing the coefficients of the equation
 /// @param sqrt_discr square root of the discriminant 
 /// @param ans structure storing the roots of the equation and their count
 
-void is_pos_discr(QuadraticIn koef, double sqrt_discr, Answers* ans)
+void is_pos_discr(Coefficients coef, double sqrt_discr, Answers* ans)
 {
 
-    MY_ASSERT(!is_zero(koef.a), "Bug: a is zero in is_pos_discr!");
+    MY_ASSERT(!is_zero(coef.a), "Bug: a is zero in is_pos_discr!");
 
-    ans->x1 = (-koef.b + sqrt_discr) / (2.0 * koef.a);
-    ans->x2 = (-koef.b - sqrt_discr) / (2.0 * koef.a);
+    ans->x1 = (-coef.b + sqrt_discr) / (2.0 * coef.a);
+    ans->x2 = (-coef.b - sqrt_discr) / (2.0 * coef.a);
 
     if ((ans->x1 == ans->x1 - 0) && (ans->x2 == ans->x2 - 0) && ans->x1 == ans->x2)
     {
@@ -152,14 +152,14 @@ void is_pos_discr(QuadraticIn koef, double sqrt_discr, Answers* ans)
 // x1 == x2
 
 /// @brief solving an equation when the discriminant is zero
-/// @param koef structure storing the coefficients of the equation
+/// @param coef structure storing the coefficients of the equation
 /// @param ans structure storing the roots of the equation and their count
 
-void is_null_discr(QuadraticIn koef, Answers* ans)
+void is_null_discr(Coefficients coef, Answers* ans)
 {
-    MY_ASSERT(!is_zero(koef.a), "Bug: a is zero in is_pos_discr!");
+    MY_ASSERT(!is_zero(coef.a), "Bug: a is zero in is_pos_discr!");
 
-    ans->x1 = -koef.b / (2.0 * koef.a);
+    ans->x1 = -coef.b / (2.0 * coef.a);
 
     ans->var_of_roots = ONEROOT; 
 }
@@ -198,13 +198,13 @@ bool is_zero(double num)
 void solve_std_eq(void)
 {
     Answers ans = {.var_of_roots = 0, .x1 = NAN, .x2 = NAN};
-    QuadraticIn koef = {.a = 0.0, .b = 0.0, .c = 0.0};
+    Coefficients coef = {.a = 0.0, .b = 0.0, .c = 0.0};
 
-    input_coef(&(koef.a), 'a');
-    input_coef(&(koef.b), 'b');
-    input_coef(&(koef.c), 'c');
+    input_coef(&(coef.a), 'a');
+    input_coef(&(coef.b), 'b');
+    input_coef(&(coef.c), 'c');
 
-    solve_square_equation(koef, &ans);
+    solve_square_equation(coef, &ans);
 
     output_coef(&ans);
 
@@ -215,17 +215,17 @@ void solve_std_eq(void)
 //--------------------------
 
 /// @brief programs for the linear equation case
-/// @param koef structure storing the coefficients of the equation
+/// @param coef structure storing the coefficients of the equation
 /// @param ans structure storing the roots of the equation and their count
 /// @return true if calculate roots of equation, else return false
 
-bool lin_equation(QuadraticIn koef, Answers* ans)
+bool lin_equation(Coefficients coef, Answers* ans)
 {   
-    if (is_zero(koef.a))
+    if (is_zero(coef.a))
     {
-        if (is_zero(koef.b))
+        if (is_zero(coef.b))
         {
-            if (is_zero(koef.c)) 
+            if (is_zero(coef.c)) 
             {    
                 infinite_solutions(ans); // бесконечность решений (case 1)
                 return true;
@@ -239,7 +239,7 @@ bool lin_equation(QuadraticIn koef, Answers* ans)
         }
         else
         {
-            linear_equation(koef, ans); // 1 решение (case 3)
+            linear_equation(coef, ans); // 1 решение (case 3)
             return true;
         }
     }
@@ -250,16 +250,16 @@ bool lin_equation(QuadraticIn koef, Answers* ans)
 //--------------------------
 
 /// @brief case a = 0 in square equation
-/// @param koef structure storing the coefficients of the equation
+/// @param coef structure storing the coefficients of the equation
 /// @param sqrt_discr square root of the discriminant 
 /// @param ans structure storing the roots of the equation and their count
 /// @return true if calculate roots of equation, else return false
 
-bool only_a_case(QuadraticIn koef, double sqrt_discr, Answers* ans)
+bool only_a_case(Coefficients coef, double sqrt_discr, Answers* ans)
 {
-    if (is_zero(koef.b) && is_zero(koef.c))
+    if (is_zero(coef.b) && is_zero(coef.c))
     {
-        is_pos_discr(koef, sqrt_discr, ans); // 1 решение (case 3)
+        is_pos_discr(coef, sqrt_discr, ans); // 1 решение (case 3)
         return true;
     }
     return false;
@@ -268,18 +268,18 @@ bool only_a_case(QuadraticIn koef, double sqrt_discr, Answers* ans)
 //--------------------------
 
 /// @brief case b = 0 in square equation
-/// @param koef structure storing the coefficients of the equation
+/// @param coef structure storing the coefficients of the equation
 /// @param sqrt_discr square root of the discriminant 
 /// @param ans structure storing the roots of the equation and their count
 /// @return true if calculate roots of equation, else return false
 
-bool b_is_zero_case(QuadraticIn koef, double sqrt_discr, Answers* ans)
+bool b_is_zero_case(Coefficients coef, double sqrt_discr, Answers* ans)
 {
-    if (is_zero(koef.b))
+    if (is_zero(coef.b))
     {
-        if ((koef.a > 0 && koef.c < 0) || (koef.a < 0 && koef.c > 0))
+        if ((coef.a > 0 && coef.c < 0) || (coef.a < 0 && coef.c > 0))
         {
-            is_pos_discr(koef, sqrt_discr, ans);
+            is_pos_discr(coef, sqrt_discr, ans);
             return true;
         }
         else
@@ -294,16 +294,16 @@ bool b_is_zero_case(QuadraticIn koef, double sqrt_discr, Answers* ans)
 //--------------------------
 
 /// @brief case c = 0 in square equation
-/// @param koef structure storing the coefficients of the equation
+/// @param coef structure storing the coefficients of the equation
 /// @param sqrt_discr square root of the discriminant 
 /// @param ans structure storing the roots of the equation and their count
 /// @return true if calculate roots of equation, else return false
 
-bool c_is_zero_case(QuadraticIn koef, double sqrt_discr, Answers* ans)
+bool c_is_zero_case(Coefficients coef, double sqrt_discr, Answers* ans)
 {
-    if (is_zero(koef.c))
+    if (is_zero(coef.c))
     {
-        is_pos_discr(koef, sqrt_discr, ans);
+        is_pos_discr(coef, sqrt_discr, ans);
         return true;
     }
 
@@ -314,21 +314,21 @@ bool c_is_zero_case(QuadraticIn koef, double sqrt_discr, Answers* ans)
 //--------------------------
 
 /// @brief 
-/// @param koef structure storing the coefficients of the equation
+/// @param coef structure storing the coefficients of the equation
 /// @param discr discriminant of the equation
 /// @param sqrt_discr square root of the discriminant 
 /// @param ans structure storing the roots of the equation and their count
 /// @return true if calculate roots of equation, else return false
 
-bool squear_type_eq(QuadraticIn koef, double discr, double sqrt_discr, Answers* ans)
+bool squear_type_eq(Coefficients coef, double discr, double sqrt_discr, Answers* ans)
 {
     if (discr > DOUBLE_ZERO)
     {
-        is_pos_discr(koef, sqrt_discr, ans); // 2 решения (case 4)
+        is_pos_discr(coef, sqrt_discr, ans); // 2 решения (case 4)
         return true;
 
     } else if (is_zero(discr)) {
-        is_null_discr(koef, ans); // 1 решение (case 3)
+        is_null_discr(coef, ans); // 1 решение (case 3)
         return true;
 
     } else {

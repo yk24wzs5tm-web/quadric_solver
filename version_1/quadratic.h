@@ -32,12 +32,13 @@ struct Answers
 //--------------------------
 
 /// @brief coefficients of the equation
-struct QuadraticIn 
+struct Coefficients 
 {
     double a;
     double b; 
     double c;
 };
+
 
 #define DOUBLE_ZERO 0.0     // Значение нуля для сравнения double
 #define EPSILON_SR 0.000001 // Точность вычислений 
@@ -53,32 +54,39 @@ enum ROOTS
     TWOROOTS = 2
 };
 
-#define MY_ASSERT(condition, message) my_assert((condition), (message), __FILE__, __LINE__) 
+
+#define NDEBUG
+#ifndef NDEBUG
+    #define MY_ASSERT(condition, message) my_assert((condition), (message), __FILE__, __LINE__) 
+#else 
+    #define MY_ASSERT(condition, message)
+#endif
+
 
 // output_coef
 void output_coef(Answers*);
 // prototypes
 void input_coef(double*, char);
-// 
+
 void solve_std_eq(void);
 
 bool is_zero(double);
 
 void clean_buffer(void);
 
-void solve_square_equation(QuadraticIn, Answers*);
-bool lin_equation(QuadraticIn, Answers*);
-bool only_a_case(QuadraticIn, double, Answers*);
-bool b_is_zero_case(QuadraticIn, double, Answers*);
-bool c_is_zero_case(QuadraticIn, double, Answers*);
-bool squear_type_eq(QuadraticIn, double, double, Answers*);
+void solve_square_equation(Coefficients, Answers*);
+bool lin_equation(Coefficients, Answers*);
+bool only_a_case(Coefficients, double, Answers*);
+bool b_is_zero_case(Coefficients, double, Answers*);
+bool c_is_zero_case(Coefficients, double, Answers*);
+bool squear_type_eq(Coefficients, double, double, Answers*);
 
 
 int is_equal(double num1, double num2);
 void my_assert(bool, const char*, const char*, int);
 
 // a == 0
-void linear_equation(QuadraticIn, Answers*);
+void linear_equation(Coefficients, Answers*);
 
 void infinite_solutions(Answers*);
 void no_solutions(Answers*);
@@ -87,6 +95,6 @@ void no_solutions(Answers*);
 void negative_sqrt(Answers*);
 
 // a != 0, b != 0, c != 0
-void is_pos_discr(QuadraticIn, double sqrt_discr, Answers*);
-void is_null_discr(QuadraticIn, Answers*);
+void is_pos_discr(Coefficients, double sqrt_discr, Answers*);
+void is_null_discr(Coefficients, Answers*);
 void is_neg_discr(Answers*);
